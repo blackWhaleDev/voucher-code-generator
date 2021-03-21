@@ -1,7 +1,7 @@
 <?php
 
 if (! function_exists('unique_field_generator')) {
-    function unique_field_generator(): string
+    function unique_field_generator(): array
     {
         $ip = \Request::ip();
         $time_zone = geoip($ip)->timezone;
@@ -15,11 +15,11 @@ if (! function_exists('unique_field_generator')) {
 
         if ($last_val === null){
             Illuminate\Support\Facades\Cache::tags([$time_zone])->put('last_code', $rand, $diff_sec);
-            return $rand.'-'.$date;
+            return ['code' => $rand.'-'.$date , 'timezone' => $time_zone];
         }else{
             $new_code = $last_val + 1;
             Illuminate\Support\Facades\Cache::tags([$time_zone])->put('last_code', $new_code, $diff_sec);
-            return $new_code.'-'.$date;
+            return ['code' => $new_code.'-'.$date , 'timezone' => $time_zone];
         }
 
     }
